@@ -195,9 +195,9 @@
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
-  _.some = function(collection, iterator) {
+  _.some = function(collection, iterator) {    
     iterator = iterator || _.identity;
-    return !_.every(collection, function(item) {
+    return !_.every(collection, function(value){
       return !iterator(value);
     });
     // TIP: There's a very clever way to re-use every() here.
@@ -285,6 +285,16 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    var memory = {};
+
+    return function() {
+      var item = JSON.stringify(arguments);
+      if (!memory[item]) {
+        memory[item] = func.apply(this, arguments);
+      }
+
+      return memory[item];
+    };
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -294,6 +304,10 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    var steps = Array.prototype.slice.call(arguments, 2);
+    setTimeout(function() {
+      func.apply(this, steps);
+    }, wait);
   };
 
 
@@ -308,6 +322,15 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var shuffled = [];
+    var cloneArray = array.slice(0);
+    for (var i = 0; i < array.length; i++) {
+      var randomIndex = Math.floor(Math.random() * cloneArray.length);
+      shuffled.push(cloneArray[randomIndex]);
+      cloneArray.splice(randomIndex, 1);
+    }
+
+    return shuffled;
   };
 
 
